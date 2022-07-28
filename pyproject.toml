@@ -1,0 +1,53 @@
+#python -m pip install pip-tools
+#pip-compile pyproject.toml
+
+#python -m pip install build twine
+#python -m build
+#twine upload -r testpypi dist/*
+
+# pyproject.toml
+
+[build-system]
+requires = ["setuptools>=61.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gitignoreformatter"
+fullname = ".gitignore Formater Tool",
+version = "1.1.2" #don't forget to update it in the args to!
+description = "A basic CLI program that allows for quick formatting of a .gitignore file"
+readme = "README.md"
+authors = [{ name = "Markus Hammer", email = "107761433+MarkusHammer@users.noreply.github.com" }]
+license = { file = "LICENSE" }
+classifiers = [
+    "License :: OSI Approved :: Mozilla Public License 2.0 (MPL 2.0)",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3"
+]
+keywords = [
+    "git", 
+    "gitignore", 
+    ".gitignore"
+    "ignore"
+    "formatter"
+    "tool"
+    "devtool"
+    "small"
+    "simple"
+    "development"
+]
+dependencies = [ "argparse"]
+requires-python = ">=3.7"
+
+[project.optional-dependencies]
+dependencies = ["pathlib"]
+dev = ["setuptools"]
+
+[project.urls]
+Homepage = "https://github.com/MarkusHammer/gitignore-formatter"
+
+[project.scripts]
+realpython = "gitignoreformatter.__main__:main"
+
+[tools.setuptools]
+zip-safe = true
