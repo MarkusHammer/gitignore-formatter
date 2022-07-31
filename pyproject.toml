@@ -13,7 +13,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "gitignoreformatter"
-fullname = ".gitignore Formater Tool",
+#fullname = ".gitignore Formater Tool"
 version = "1.1.2" #don't forget to update it in the args to!
 description = "A basic CLI program that allows for quick formatting of a .gitignore file"
 readme = "README.md"
@@ -27,13 +27,13 @@ classifiers = [
 keywords = [
     "git", 
     "gitignore", 
-    ".gitignore"
-    "ignore"
-    "formatter"
-    "tool"
-    "devtool"
-    "small"
-    "simple"
+    ".gitignore",
+    "ignore",
+    "formatter",
+    "tool",
+    "devtool",
+    "small",
+    "simple",
     "development"
 ]
 dependencies = [ "argparse"]
