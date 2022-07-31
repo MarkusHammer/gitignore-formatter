@@ -3,8 +3,9 @@
 By Markus Hammer 2022
 
 Licenced under the Mozilla Public License 2.0 (MPL 2.0)
+Read the included 'LICENCE' file for more information.
 
-See the github repo for more info!
+This project is on github here:
 https://github.com/MarkusHammer/gitignore-formatter
 '''
 
