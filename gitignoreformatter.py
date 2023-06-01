@@ -9,11 +9,15 @@ This project is on github here:
 https://github.com/MarkusHammer/gitignore-formatter
 '''
 
-import argparse
-from sys import exit
+GITIGNORE_LINE_ENDING = "\n"
+
+__version__ = "1.1.3.0"
+
+from argparse import ArgumentParser
+from sys import exit as end
 
 def __main__():
-    parser = argparse.ArgumentParser(description='A basic CLI program that allows for quick formatting of a .gitignore file')
+    parser = ArgumentParser(description='A basic CLI program that allows for quick formatting of a .gitignore file')
     parser.add_argument('inFilePath', action='store', help='The input filepath')
     parser.add_argument('-o','--out', '--outfile', dest='outFilePath', action='store', default=None,
                         help='The output filepath, if not set, it defaults to the overwriting the input file')
@@ -28,7 +32,7 @@ def __main__():
     parser.add_argument('-p','--path', '--paths', dest='paths', action='store', default="Ignore",
                         choices=["RemoveAll", "Ignore", "RemoveRepeated", "MakeAllComment", "MakeAllBlank"],
                         help="What should be done to the paths/patterns listed in the file")
-    parser.add_argument("--ver", "--version", action='version', version="1.1.2")#don't forget to update it in the pyproject.toml to!
+    parser.add_argument("--ver", "--version", action='version', version=__version__)
     parser.add_argument("--git", "--github", action='version', help="Give a link to the github repo page", version="https://github.com/MarkusHammer/gitignore-formatter")
     args = parser.parse_args()
     
@@ -45,13 +49,13 @@ def __main__():
             return inp
     
     #arg correction
-    if (args.outFilePath == None):
+    if (args.outFilePath is None):
         args.outFilePath = args.inFilePath
 
     remember = [] #holds the end result
 
-    args.inFilePath = Path(args.inFilePath.strip("'").strip('"'))
-    args.outFilePath = Path(args.outFilePath.strip("'").strip('"'))
+    args.inFilePath = Path(args.inFilePath.strip('"').strip("'"))
+    args.outFilePath = Path(args.outFilePath.strip('"').strip("'"))
 
     if (args.verbose):
         if (str(args.inFilePath) == str(args.outFilePath)):
@@ -63,30 +67,34 @@ def __main__():
         file = open(args.inFilePath, "rt", encoding="utf8")
     except FileNotFoundError:
         print("The input file path (" + str(args.inFilePath) + ") was not found as a text file with acessable text in it. Check if the path is typed properly, or if you ran this with the proper permissions to access that file.")
-        exit(-1)
+        end(-1)
     if (args.verbose):
         print("Modifying...")
-    for line in file:
-        line = line.replace("\n","")
+    for line in file.readlines():
+        line = line.replace("\n","").replace("\r","")
         
-        isComment = len(line) >= 1 and (line[0] == '#')
+        isBlank = (line.strip() == "")
         
-        if isComment: line = line.lstrip('#') #temporarily remove the comment #
-        
-        lineStriped = line.strip()
-        
-        isBlank = (lineStriped == "")
+        if not isBlank:
+            isComment = (line.startswith('#'))
+            
+            if isComment:
+                line = line[1:] #temporarily remove the comments first character (always '#')
         
         if isBlank or isComment:
-            line = lineStriped
+            line = line.strip()
         
-        if len(line) >= 1 and (line[-1] == "\\"):
+        if line == "":
+            isBlank = True
+            isComment = False
+        
+        if len(line) >= 1 and line.endswith("\\"):
             line += " "
         
+        if isComment:
+            line = f"#{line}" #replace the comment's #
+        
         allreadyRemembered = (line in remember)
-        
-        if isComment: line = '#' + line #replace the comment #
-        
         rememberTest = True #default to allowing the line through
         if isBlank:
             if args.blank == "RemoveAll":
@@ -97,7 +105,7 @@ def __main__():
                 rememberTest = True
                 line = "#" + line
             else: #args.blank == "RemoveRepeated"
-                rememberTest = not (remember[-1] == "")
+                rememberTest = (remember[-1] != "")
         elif isComment:
             if args.comments == "RemoveAll":
                 rememberTest = False
@@ -108,14 +116,14 @@ def __main__():
                 line = ""
             else: #args.comments == "RemoveRepeated"
                 rememberTest = not allreadyRemembered
-        else: #isNormalPathargs.paths
+        else: #isNormalPath
             if args.paths == "RemoveAll":
                 rememberTest = False
             elif args.paths == "Ignore":
                 rememberTest = True
             elif args.paths == "MakeAllComment":
                 rememberTest = True
-                line = "#" + line
+                line = f"#{line}"
             elif args.paths == "MakeAllBlank":
                 rememberTest = True
                 line = ""
@@ -126,25 +134,21 @@ def __main__():
             remember.append(line)
     file.close()
 
-    remember = remember[0:-1]
-
     try:
         file = open(args.outFilePath, "wt+", encoding="utf8")
-    except FileExistsError:
-        print("The output file path (" + str(args.outFilePath) + ") is not able to be created or overwritten. Check if you ran this with the proper permissions to access this file, or if there is some other form of write protection to that location.")
-        exit(-1)
+    except (FileExistsError, PermissionError):
+        print(f"The output file path ({args.outFilePath}) is not able to be created or overwritten. Check if you ran this with the proper permissions to access this file, or if there is some other form of write protection to that location.")
+        end(-1)
     if (args.verbose):
         print("Writing...")
+    
     for line in remember[:-1]:
-        file.write(line + "\n")
+        file.write(line + GITIGNORE_LINE_ENDING)
     file.write(remember[-1])
+    
     file.close()
-
-class NotAModuleError(Exception):
-    def __str__(self):
-        return "gitignoreformatter is not to be used as a module; only as a CLI program. Please remove this import."
+    
+    end(0)
 
 if __name__ == "__main__":
     __main__()
-else:
-    raise NotAModuleError

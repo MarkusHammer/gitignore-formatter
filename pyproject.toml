@@ -1,53 +1,71 @@
-#python -m pip install pip-tools
-#pip-compile pyproject.toml
-
-#python -m pip install build twine
-#python -m build
-#twine upload -r testpypi dist/*
-
-# pyproject.toml
-
-[build-system]
-requires = ["setuptools>=61.0.0", "wheel"]
-build-backend = "setuptools.build_meta"
+#pyproject.toml for gitignoreformatter python script
+#THX https://packaging.python.org/en/latest/specifications/declaring-project-metadata/#entry-points
+#THX https://pypi.org/project/validate-pyproject/
 
 [project]
-name = "gitignoreformatter"
-#fullname = ".gitignore Formater Tool"
-version = "1.1.2" #don't forget to update it in the args to!
-description = "A basic CLI program that allows for quick formatting of a .gitignore file"
-readme = "README.md"
-authors = [{ name = "Markus Hammer", email = "107761433+MarkusHammer@users.noreply.github.com" }]
-license = { file = "LICENSE" }
-classifiers = [
-    "License :: OSI Approved :: Mozilla Public License 2.0 (MPL 2.0)",
-    "Programming Language :: Python",
-    "Programming Language :: Python :: 3"
-]
-keywords = [
-    "git", 
-    "gitignore", 
-    ".gitignore",
-    "ignore",
-    "formatter",
-    "tool",
-    "devtool",
-    "small",
-    "simple",
-    "development"
-]
-dependencies = [ "argparse"]
-requires-python = ">=3.7"
+    dynamic = ["version", "readme"]
+    name = "gitignoreformatter"
+    #fullname = ".gitignore Formater Tool"
+    description = "A basic CLI program that allows for quick formatting of a .gitignore file"
+    authors = [{ name = "Markus Hammer", email = "107761433+MarkusHammer@users.noreply.github.com" }]
+    license = { file = "LICENSE" }
+    dependencies = ["argparse"]
+    requires-python = ">=3.0"
+    classifiers = [
+        "License :: OSI Approved :: Mozilla Public License 2.0 (MPL 2.0)",
+        "Development Status :: 5 - Production/Stable",
+        "Environment :: Console",
+        "Intended Audience :: Developers",
+        "Natural Language :: English",
+        "Topic :: Software Development :: Version Control",
+        "Topic :: Software Development :: Version Control :: Git",
+        "Topic :: Utilities",
+        "Programming Language :: Python",
+        "Programming Language :: Python :: 3"
+    ]
+    keywords = [
+        "git", 
+        "gitignore", 
+        ".gitignore",
+        "ignore",
+        "formatter",
+        "tool",
+        "devtool",
+        "small",
+        "simple",
+        "development",
+        "utility"
+    ]
+    [project.optional-dependencies]
+        cli = ["pathlib"]
+        dev = ["setuptools>=64.0.0", "pip-tools", "validate-pyproject[all]", "build", "twine"]
+    [project.scripts] 
+        gitignoreformatter = "gitignoreformatter:__main__"
+        gitignoreformat = "gitignoreformatter:__main__"
+    [project.urls]
+        Homepage = "https://github.com/MarkusHammer/gitignore-formatter"
+        Github  = "https://github.com/MarkusHammer/gitignore-formatter"
+        Issues = "https://github.com/MarkusHammer/gitignore-formatter/issues"
+        "Pull Requests" = "https://github.com/MarkusHammer/gitignore-formatter/pulls"
+        Git = "https://github.com/MarkusHammer/gitignore-formatter.git"
 
-[project.optional-dependencies]
-dependencies = ["pathlib"]
-dev = ["setuptools"]
+[build-system]
+    requires = ["setuptools>=64.0.0"]
+    build-backend = "setuptools.build_meta"
+    
+    ### NOTE THIS MUST BE BUILT ON A VERSION OF PYTHON >= 3.10, 3.9.1 and 3.8.7 #THX https://github.com/pypa/build/issues/255#issuecomment-794560752
+    ### py -3.10 -m pip install pip-tools validate-pyproject[all] build twine setuptools
+    ### validate-pyproject pyproject.toml
+    ### pip-compile pyproject.toml
+    ### py -3.10 -m build
+    ### twine upload dist/* --verbose -u USERNAME -p PASSWORD
 
-[project.urls]
-Homepage = "https://github.com/MarkusHammer/gitignore-formatter"
+[tool.setuptools]
+    zip-safe = true
+    [tool.setuptools.dynamic]
+        version = {attr = "gitignoreformatter.__version__"}
+        readme = {file = ["README.md", "SECUIRTY.md", "LICENSE"], content-type = "text/markdown"}
 
-[project.scripts]
-realpython = "gitignoreformatter.__main__:main"
-
-[tools.setuptools]
-zip-safe = true
+[tool.pylint."MESSAGES CONTROL"]
+    disable = "C0301, C0415"
+    # Disables the warnings for importing out of the top level and long lines
