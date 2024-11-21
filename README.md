@@ -1,5 +1,7 @@
 # .gitignore Formatter
 
+[![CodeQL](https://github.com/MarkusHammer/gitignore-formatter/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/MarkusHammer/gitignore-formatter/actions/workflows/github-code-scanning/codeql) [![Ko-Fi](https://img.shields.io/badge/Ko--fi-F16061?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ko-fi.com/markushammer)
+
 A simple CLI .gitignore formatter. Allows for the blank lines, comments, and paths in the file to be changed, removed or converted independently, allowing for quick editing of huge .gitignore files without the fuss.
 
 ## Setup
